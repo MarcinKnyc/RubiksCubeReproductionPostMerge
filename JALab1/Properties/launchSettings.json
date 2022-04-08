@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "JALab1": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
