@@ -76,7 +76,7 @@ namespace RubiksCubeReproduction.Models
             List<Thread> threads = new List<Thread>();
             if (isAssemblerLibraryActive)
             {
-                GenerateImageReproductionInAssembly();
+                ModifyOnePixelInAssembly();
             }
             else //C# library is active
             {
@@ -104,9 +104,9 @@ namespace RubiksCubeReproduction.Models
             return milisecondsCopy;
         }
 
-        private unsafe void GenerateImageReproductionInAssembly()
+        private unsafe void ModifyOnePixelInAssembly()
         {
-            fixed (byte* pixelPtr = new byte[3] { 255, 255, 255 })
+            fixed (byte* pixelPtr = new byte[3] { 10,160,70 })
             {
                 fixed (byte* colorPtr = new byte[18] { 0, 155, 72, 255, 255, 255, 183, 18, 52, 255, 213, 0, 0, 70, 173, 255, 88, 0 })
                 {

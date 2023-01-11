@@ -19,14 +19,14 @@ XOR EAX, EAX
 ;mov AL, [RDX]
 
 ;przygotowanie wektora z kolorem piksela
-;RCX to tabela bajtów z kolorami pixeli podawana jako argument
-MOV AL, byte ptr [RCX+0]      ;przesuwamy wartoœæ dla R do AL
+;RCX oraz RSI (2 kopie!!!) to tabela bajtów z kolorami pixeli podawana jako argument
+MOV AL, byte ptr [RSI+0]      ;przesuwamy wartoœæ dla R do AL
 CVTSI2SS XMM3, EAX              ;konwersja int x EAX na float
 PSLLDQ XMM3, 4                ;przesuwa o DWORDa
-MOV AL, byte ptr [RCX+1]      
+MOV AL, byte ptr [RSI+1]      
 CVTSI2SS XMM3, EAX
 PSLLDQ XMM3, 4
-MOV AL, byte ptr [RCX+2]      
+MOV AL, byte ptr [RSI+2]      
 CVTSI2SS XMM3, EAX
 
 MOV	CL, 6
@@ -67,6 +67,7 @@ PEXTRD EAX, XMM4, 2
 add DISTANCERGB, EAX
 
 ;zapisanie dystansu kwadratowego
+;RBX to arrayka, któr¹ dostajemy pust¹ od u¿ytkownika, do której wpisujemy dystanse
 mov EAX, DISTANCERGB
 mov dword ptr [RBX], EAX
 mov AL, [RBX]
@@ -81,21 +82,20 @@ JNZ	calcdistance
 
 XOR EAX, EAX
 sub RDX, 18
-sub RCX, 18
 sub RBX, 24
 
 mov CL, 6
 ;znalezienie indeksu minimalnej odleg³oœci
 findmin:
 XOR EAX, EAX
-mov EAX, dword ptr [RBX]
+mov EAX, dword ptr [RBX]; debug
 CMP MAXVAL, EAX
 JL skipreplacingmaxvalue
 
 mov MAXVAL, EAX
 xor EAX, EAX
-mov AL, MINIMALDISTANCEINDEX
-mov CURRENTDISTANCEINDEX, AL
+mov AL, CURRENTDISTANCEINDEX
+mov MINIMALDISTANCEINDEX, AL
 
 skipreplacingmaxvalue:
 inc CURRENTDISTANCEINDEX
@@ -109,29 +109,28 @@ DEC	CL
 JNZ	findmin
 
 
+
 xor eax, eax
-mov AL, MINIMALDISTANCEINDEX
 mov CL, MINIMALDISTANCEINDEX
 iterateToClosestColor:
-CMP CL, 0
+cmp CL, 0
 JE foundClosestColor
-INC RCX
-INC RCX
-INC RCX
+INC RDX
+INC RDX
+INC RDX
 DEC CL
 JMP iterateToClosestColor
 
 foundClosestColor:
-xor eax, eax
-mov AL, byte ptr [RCX]
+mov AL, byte ptr [RDX]
 mov [RSI], AL
-INC RCX
-mov AL, byte ptr [RCX]
+INC RDX
+mov AL, byte ptr [RDX]
 mov [RSI+1], AL
-INC RCX
-mov AL, byte ptr [RCX]
+INC RDX
+mov AL, byte ptr [RDX]
 mov [RSI+2], AL
-INC RCX
+INC RDX
 
 RET;
 PS_2 ENDP
