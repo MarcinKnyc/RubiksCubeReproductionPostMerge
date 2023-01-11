@@ -17,7 +17,7 @@ namespace RubiksCubeReproduction.Models
     public class RubiksCubeImageReproduction
     {
         //Argument: 3 bytes = pixel's RGB values
-        [DllImport(@"C:\Users\Marcin\source\repos\JALab1\x64\Debug\DLLJALAB1.dll")]
+        [DllImport("DLLJALAB1.dll")]
         static unsafe extern int PS_2(byte* pixelRGB, byte* colorRGBs, long* tempPtr);
 
         public static int miliseconds = 0;

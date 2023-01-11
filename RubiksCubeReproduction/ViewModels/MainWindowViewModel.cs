@@ -7,6 +7,8 @@ using System.Windows.Media;
 using RubiksCubeReproduction.Converters;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
+using System.Windows.Documents;
+using System.Collections.Generic;
 
 namespace RubiksCubeReproduction.ViewModels
 {
@@ -153,11 +155,13 @@ namespace RubiksCubeReproduction.ViewModels
         public RelayCommand SelectImageCommand { get; private set; }
         public RelayCommand SaveImageCommand { get; private set; }
         public RelayCommand GenerateReproductionCommand { get; private set; }
+        public RelayCommand TestCommand { get; private set; }
         public void InitializeCommands()
         {
             InitializeSelectImageCommand();
             InitializeSaveImageCommand();
             InitializeGenerateReproductionCommand();
+            InitializeTestCommand();
         }
 
         private int SavedImagesCounter = 0;
@@ -223,6 +227,48 @@ namespace RubiksCubeReproduction.ViewModels
                 ComputationTime = TimeSpan.FromMilliseconds(miliseconds);
                 MainPanelImage = RubiksCubeImageReproduction.ImageReproduction;
                 InformationText = "Your image is ready!";
+            });
+        }
+
+        private void InitializeTestCommand()
+        {
+            TestCommand = new RelayCommand(() =>
+            {
+                if (MainPanelImage == null)
+                {
+                    MessageBox.Show("Select an image first!");
+                    return;
+                }
+                List<int> threadCounts = new List<int>() { 1, 2, 4, 8, 16, 32};
+
+                //ONLY USE IN DEBUG:
+                List<bool> useAssemblyLib = new List<bool>() { true, false };
+                //ONLY USE IN RELEASE:
+                //List<bool> useAssemblyLib = new List<bool>() { false };
+
+                List<TestResult> testResults = new List<TestResult>();
+                foreach (int threadCountUsed in threadCounts)
+                {
+                    foreach(bool isAsseblyLibUsed in useAssemblyLib)
+                    {
+                        int milisecondsEstimated = RubiksCubeImageReproduction.GenerateImageReproduction(isAsseblyLibUsed, threadCountUsed);
+                        testResults.Add(new TestResult()
+                        {
+                            isAssemblerLibraryActive = isAsseblyLibUsed,
+                            miliseconds = milisecondsEstimated,
+                            threadCount = threadCountUsed
+                        });
+                    }                    
+                }
+                string result = "";
+                foreach (TestResult testResult in testResults)
+                {
+                    string library = testResult.isAssemblerLibraryActive
+                        ? "assembly"
+                        : "C#";
+                    result += $"{testResult.threadCount} threads, generated in {testResult.miliseconds} ms using the {library} library. \r\n";
+                }
+                MessageBox.Show(result);
             });
         }
         #endregion
