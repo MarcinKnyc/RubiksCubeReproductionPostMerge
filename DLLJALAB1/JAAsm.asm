@@ -66,9 +66,6 @@ mov EAX, DISTANCERGB
 mov [RBX], AL
 mov AL, [RBX]
 inc RBX
-inc RBX
-inc RBX
-inc RBX
 
 ;pêtla
 DEC	CL
@@ -76,21 +73,15 @@ JNZ	calcdistance
 
 XOR EAX, EAX
 sub RDX, 18
-sub RBX, 24
+sub RBX, 6
 
 
 
 mov EAX, [RBX]
 mov [RSI], AL
 inc RBX
-inc RBX
-inc RBX
-inc RBX
 mov AL, byte ptr [RBX]
 mov [RSI+1], AL
-inc RBX
-inc RBX
-inc RBX
 inc RBX
 ;mov EAX, word ptr [RBX]
 mov EAX, [RBX]
