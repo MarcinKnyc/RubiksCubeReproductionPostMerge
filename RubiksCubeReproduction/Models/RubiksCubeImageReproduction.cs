@@ -71,22 +71,24 @@ namespace RubiksCubeReproduction.Models
             _computationTimeTimer.Elapsed += Add1Milisecond;
             _computationTimeTimer.AutoReset = true;
             _computationTimeTimer.Start();
-            
+
             List<ThreadSettings> threadSettings = divideImageForThreads(numberOfThreads);
             List<Thread> threads = new List<Thread>();
-            if (isAssemblerLibraryActive)
+
+            foreach (ThreadSettings settings in threadSettings)
             {
-                ModifyOnePixelInAssembly();
-            }
-            else //C# library is active
-            {
-                foreach (ThreadSettings settings in threadSettings)
+                if (isAssemblerLibraryActive)
+                {
+                    ModifyOnePixelInAssembly();
+                }
+                else //C# library is active
                 {
                     threads.Add(new Thread(() =>
                         GenerateImageReproductionInCSharp(settings.ImgColStart, settings.ImgColStopBefore, settings.ImgHeight)
                     ));
                 }
             }
+
             foreach (Thread thread in threads)
             {
                 thread.Start();
@@ -104,9 +106,9 @@ namespace RubiksCubeReproduction.Models
             return milisecondsCopy;
         }
 
-        private unsafe void ModifyOnePixelInAssembly()
+        private unsafe (byte, byte, byte) ModifyOnePixelInAssembly(byte r, byte g, byte b)
         {
-            fixed (byte* pixelPtr = new byte[3] { 10,160,70 })
+            fixed (byte* pixelPtr = new byte[3] { r,g,b })
             {
                 fixed (byte* colorPtr = new byte[18] { 0, 155, 72, 255, 255, 255, 183, 18, 52, 255, 213, 0, 0, 70, 173, 255, 88, 0 })
                 {
@@ -114,7 +116,7 @@ namespace RubiksCubeReproduction.Models
                     {
                         int a = PS_2(pixelPtr, colorPtr, tempPtr);
                         //passing values back thru pointer works
-                        MessageBox.Show(pixelPtr[0].ToString());
+                        return (pixelPtr[0], pixelPtr[1], pixelPtr[2]);
                     }
                 }
             }
@@ -161,6 +163,22 @@ namespace RubiksCubeReproduction.Models
                 }
             }
             
+        }
+
+        private void GenerateImageReproductionInAssembly(int imgColStart, int imgColEndBefore, int imgHeight)
+        {
+            //Refactor for modifying PixelRGB, not Bitmap
+            for (int x = imgColStart; x < imgColEndBefore; x++)
+            {
+                for (int y = 0; y < imgHeight; y++)
+                {
+                    var foundRGBValues = ModifyOnePixelInAssembly(PixelRGBs[x, y, 0], PixelRGBs[x, y, 1], PixelRGBs[x, y, 2]);
+                    PixelRGBs[x, y, 0] = foundRGBValues.Item1;
+                    PixelRGBs[x, y, 1] = foundRGBValues.Item2;
+                    PixelRGBs[x, y, 2] = foundRGBValues.Item3;
+                }
+            }
+
         }
 
         private void SavePixelRGBsToBitmap()
