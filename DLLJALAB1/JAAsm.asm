@@ -5,6 +5,9 @@ DISTANCERGB DD 0
 ;DISTANCESRGB	DB  0, 0, 0, 0, 0, 0
 ;superceded by RBX
 COUNTDOWN DB 6
+MAXVAL DD 195075
+MINIMALDISTANCEINDEX DB 0
+CURRENTDISTANCEINDEX DB 0
 
 .code
 PS_2 PROC
@@ -32,6 +35,8 @@ calcdistance:
 ;RDX to tabela bajtów z kolroami pixeli podawana jako argument
 
 XOR EAX, EAX
+xorps XMM4, XMM4
+mov DISTANCERGB, 0
 MOV AL, byte ptr [RDX]      
 CVTSI2SS XMM4, EAX              
 PSLLDQ XMM4, 4           
@@ -63,8 +68,11 @@ add DISTANCERGB, EAX
 
 ;zapisanie dystansu kwadratowego
 mov EAX, DISTANCERGB
-mov [RBX], AL
+mov dword ptr [RBX], EAX
 mov AL, [RBX]
+inc RBX
+inc RBX
+inc RBX
 inc RBX
 
 ;pêtla
@@ -73,19 +81,57 @@ JNZ	calcdistance
 
 XOR EAX, EAX
 sub RDX, 18
-sub RBX, 6
+sub RCX, 18
+sub RBX, 24
+
+mov CL, 6
+;znalezienie indeksu minimalnej odleg³oœci
+findmin:
+XOR EAX, EAX
+mov EAX, dword ptr [RBX]
+CMP MAXVAL, EAX
+JL skipreplacingmaxvalue
+
+mov MAXVAL, EAX
+xor EAX, EAX
+mov AL, MINIMALDISTANCEINDEX
+mov CURRENTDISTANCEINDEX, AL
+
+skipreplacingmaxvalue:
+inc CURRENTDISTANCEINDEX
+inc RBX
+inc RBX
+inc RBX
+inc RBX
+
+;petla
+DEC	CL
+JNZ	findmin
 
 
+xor eax, eax
+mov AL, MINIMALDISTANCEINDEX
+mov CL, MINIMALDISTANCEINDEX
+iterateToClosestColor:
+CMP CL, 0
+JE foundClosestColor
+INC RCX
+INC RCX
+INC RCX
+DEC CL
+JMP iterateToClosestColor
 
-mov EAX, [RBX]
+foundClosestColor:
+xor eax, eax
+mov AL, byte ptr [RCX]
 mov [RSI], AL
-inc RBX
-mov AL, byte ptr [RBX]
+INC RCX
+mov AL, byte ptr [RCX]
 mov [RSI+1], AL
-inc RBX
-;mov EAX, word ptr [RBX]
-mov EAX, [RBX]
+INC RCX
+mov AL, byte ptr [RCX]
 mov [RSI+2], AL
+INC RCX
 
 RET;
 PS_2 ENDP

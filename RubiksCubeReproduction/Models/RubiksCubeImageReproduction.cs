@@ -18,7 +18,7 @@ namespace RubiksCubeReproduction.Models
     {
         //Argument: 3 bytes = pixel's RGB values
         [DllImport(@"C:\Users\Marcin\source\repos\JALab1\x64\Debug\DLLJALAB1.dll")]
-        static unsafe extern int PS_2(byte* pixelRGB, byte* colorRGBs, int* tempPtr);
+        static unsafe extern int PS_2(byte* pixelRGB, byte* colorRGBs, long* tempPtr);
 
         public static int miliseconds = 0;
         public byte[] OriginalImage { get; private set; }
@@ -106,11 +106,11 @@ namespace RubiksCubeReproduction.Models
 
         private unsafe void GenerateImageReproductionInAssembly()
         {
-            fixed (byte* pixelPtr = new byte[3] { 1, 2, 3 })
+            fixed (byte* pixelPtr = new byte[3] { 255, 255, 255 })
             {
                 fixed (byte* colorPtr = new byte[18] { 0, 155, 72, 255, 255, 255, 183, 18, 52, 255, 213, 0, 0, 70, 173, 255, 88, 0 })
                 {
-                    fixed (int* tempPtr = new int[6] { 0, 0, 0, 0, 0, 0 })
+                    fixed (long* tempPtr = new long[6] { 0, 0, 0, 0, 0, 0 })
                     {
                         int a = PS_2(pixelPtr, colorPtr, tempPtr);
                         //passing values back thru pointer works
