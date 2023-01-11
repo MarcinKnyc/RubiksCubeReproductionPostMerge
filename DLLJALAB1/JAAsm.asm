@@ -1,20 +1,22 @@
-ExitProcess PROTO
+ExitProcess PROTO 
 
 .data
-COLORS	DB  0, 155, 72, 255, 255, 255, 183, 18, 52, 255, 213, 0, 0, 70, 173, 255, 88, 0
 DISTANCERGB DD 0
-DISTANCESRGB	DB  0, 0, 0, 0, 0, 0
+;DISTANCESRGB	DB  0, 0, 0, 0, 0, 0
+;superceded by RBX
 COUNTDOWN DB 6
-INDEX DD 0
-warray WORD 1,2,3,4
 
 .code
 PS_2 PROC
 XOR EAX, EAX
-mov edi, OFFSET warray
-mov INDEX, EAX
+;mov AL, [RDX]
+;inc RDX
+;mov AL, [RDX]
+;sub RDX, 1
+;mov AL, [RDX]
 
 ;przygotowanie wektora z kolorem piksela
+;RCX to tabela bajtów z kolorami pixeli podawana jako argument
 MOV AL, byte ptr [RCX+0]      ;przesuwamy wartoœæ dla R do AL
 CVTSI2SS XMM3, EAX              ;konwersja int x EAX na float
 PSLLDQ XMM3, 4                ;przesuwa o DWORDa
@@ -27,17 +29,20 @@ CVTSI2SS XMM3, EAX
 MOV	CL, 6
 calcdistance:
 ;przygotowanie wektora z kolorem z kostki rubika
-MOV AL, byte ptr [INDEX]      
+;RDX to tabela bajtów z kolroami pixeli podawana jako argument
+
+XOR EAX, EAX
+MOV AL, byte ptr [RDX]      
 CVTSI2SS XMM4, EAX              
 PSLLDQ XMM4, 4           
-INC INDEX
-MOV AL, byte ptr [INDEX]      
+INC RDX
+MOV AL, byte ptr [RDX]      
 CVTSI2SS XMM4, EAX
 PSLLDQ XMM4, 4
-INC INDEX
-MOV AL, byte ptr [INDEX]      
+INC RDX
+MOV AL, byte ptr [RDX]      
 CVTSI2SS XMM4, EAX
-inc INDEX
+inc RDX
 
 ;odejmowanie i kwadrat do wyliczenia odleg³oœci
 subps XMM4, XMM3
@@ -58,25 +63,38 @@ add DISTANCERGB, EAX
 
 ;zapisanie dystansu kwadratowego
 mov EAX, DISTANCERGB
-mov [DISTANCESRGB], AL
-inc DISTANCESRGB
+mov [RBX], AL
+mov AL, [RBX]
+inc RBX
+inc RBX
+inc RBX
+inc RBX
 
 ;pêtla
 DEC	CL
 JNZ	calcdistance
 
 XOR EAX, EAX
-mov AL, COLORS
-sub COLORS, 18
-mov AL, COLORS
+sub RDX, 18
+sub RBX, 24
 
-mov AL, [RSI+1]
-mov AL, [RSI+2]
+
+
+mov EAX, [RBX]
 mov [RSI], AL
+inc RBX
+inc RBX
+inc RBX
+inc RBX
+mov AL, byte ptr [RBX]
 mov [RSI+1], AL
-mov AL, [COLORS]
-mov AL, [COLORS+1]
-mov AL, [COLORS+17]
+inc RBX
+inc RBX
+inc RBX
+inc RBX
+;mov EAX, word ptr [RBX]
+mov EAX, [RBX]
+mov [RSI+2], AL
 
 RET;
 PS_2 ENDP
