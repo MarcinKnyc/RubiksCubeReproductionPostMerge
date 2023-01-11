@@ -4,7 +4,6 @@ ExitProcess PROTO
 DISTANCERGB DD 0
 ;DISTANCESRGB	DB  0, 0, 0, 0, 0, 0
 ;superceded by RBX
-COUNTDOWN DB 6
 MAXVAL DD 195075
 MINIMALDISTANCEINDEX DB 0
 CURRENTDISTANCEINDEX DB 0
@@ -12,6 +11,8 @@ CURRENTDISTANCEINDEX DB 0
 .code
 PS_2 PROC
 XOR EAX, EAX
+xorps XMM3, XMM3
+mov DISTANCERGB, 0
 ;mov AL, [RDX]
 ;inc RDX
 ;mov AL, [RDX]
@@ -85,10 +86,13 @@ sub RDX, 18
 sub RBX, 24
 
 mov CL, 6
+mov MAXVAL, 195075
+mov CURRENTDISTANCEINDEX, 0
+mov MINIMALDISTANCEINDEX, 0
 ;znalezienie indeksu minimalnej odleg³oœci
 findmin:
 XOR EAX, EAX
-mov EAX, dword ptr [RBX]; debug
+mov EAX, dword ptr [RBX]
 CMP MAXVAL, EAX
 JL skipreplacingmaxvalue
 

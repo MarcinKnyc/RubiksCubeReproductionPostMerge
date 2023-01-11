@@ -79,7 +79,9 @@ namespace RubiksCubeReproduction.Models
             {
                 if (isAssemblerLibraryActive)
                 {
-                    ModifyOnePixelInAssembly();
+                    threads.Add(new Thread(() =>
+                        GenerateImageReproductionInAssembly(settings.ImgColStart, settings.ImgColStopBefore, settings.ImgHeight)
+                    ));
                 }
                 else //C# library is active
                 {
