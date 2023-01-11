@@ -1,3 +1,7 @@
 LIBRARY "JAAsm"
 EXPORTS
-MyProc1
+FindChar_1
+MMX_1
+XMM_1
+PS_1
+PS_2

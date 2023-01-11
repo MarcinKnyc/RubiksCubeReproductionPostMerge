@@ -4,12 +4,13 @@ namespace JaProj
 {
     class Program
     {
-        [DllImport(@"D:\Polsl\sem IV\JA\JALab1\x64\Debug\DLLJALAB1.dll")]
-        static extern int MyProc1(int a, int b);
+        [DllImport(@"H:\Kopia z dysku D\Polsl\sem IV\JA\JALab1\x64\Debug\DLLJALAB1.dll")]
+        static extern int PS_2();
         static void Main(string[] args)
         {
-            int x = 5, y = 3;
-            int retVal = MyProc1(x, y);
+            //BENOPA, A
+            char[] szString = { 'A', 'G', 'I', 'J', 'K', 'S', (char)0xFF };
+            int retVal = PS_2();
             Console.Write("Moja pierwsza wartość obliczona w asm to:");
             Console.WriteLine(retVal);
             Console.ReadLine();

@@ -1,0 +1,84 @@
+Microsoft (R) Macro Assembler Version 6.14.8444		    04/08/22 17:25:09
+D:\Polsl\sem IV\JA\JALab1\DLLJALAB1\JAAsm.asm		     Page 1 - 1
+
+
+				     .486
+				     .model flat, stdcall
+ 00000000			     .data
+ 00000000 42 45 4E 4F 50 41 FF	     DataString DB 'BENOPA', 0FFH ; definicja ciagu znakow
+ 00000000			     .code
+				     ;****************************************************************************
+				     ;* Procedura FindChar_1 wyszukiwania znaku 'J' w ciagu 'DataString' *
+				     ;* *
+				     ;* Bezposrednia adresacja indeksowa *
+				     ;* Parametry wejsciowe: *
+				     ;* AH - szukany znak 'J' *
+				     ;* Parametry wyjsciowe: *
+				     ;* EAX - BOOL TRUE Found, FALSE not found *
+				     ;* *
+				     ;****************************************************************************
+ 00000000			     FindChar_1 PROC
+ 00000000   1   BE 00000000 R	      MOV ESI, OFFSET DataString ; zaladuj offset zmiennej 'DataString' do rej. SI
+ 00000005   1   B4 41		      MOV AH, 'A' ; zaladuj kod litery 'A' do rej. AH
+ 00000007			     Check_End:
+ 00000007   2   80 3E FF	      CMP BYTE PTR [ESI], 0FFH ; czy koniec lancucha (znak specjalny FF)?
+ 0000000A  3,1  74 0D		      JE Not_Find ; znaleziono znak konca (wartownik)
+ 0000000C   2   3A 26		      CMP AH, [ESI] ; porownaj znak z elementem lancucha 'DataString'
+ 0000000E  3,1  74 05		      JE Got_Equal ; znaleziono znak!
+ 00000010   1   83 C6 01	      ADD ESI, 1 ; inkrementuj offset
+ 00000013   3   EB F2		      JMP Check_End ; petla wyszukiwania
+ 00000015			     Got_Equal:
+ 00000015   1   8A 16		      MOV DL, [ESI] ; zaladuj znaleziony znak do DL
+ 00000017   3   EB 06		      JMP Done
+ 00000019			     Not_Find:
+ 00000019   1   B8 00000000	      MOV EAX,0 ; nie znaleziono znaku
+ 0000001E   5   C3		      RET ; powrot z procedury
+ 0000001F			     Done:
+ 0000001F   1   B8 00000001	      MOV EAX,1 ; znaleziono znak
+ 00000024   5   C3		      RET ; powrot z procedury
+ 00000025			     FindChar_1 ENDP ; koniec FindChar_1
+
+				     END
+Microsoft (R) Macro Assembler Version 6.14.8444		    04/08/22 17:25:09
+D:\Polsl\sem IV\JA\JALab1\DLLJALAB1\JAAsm.asm		     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . . . . .	GROUP
+_DATA  . . . . . . . . . . . . . . . .	32 Bit	 00000007 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . . . . .	32 Bit	 00000025 Para	  Public  'CODE'	
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+FindChar_1 . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000025 Public STDCALL
+  Check_End  . . . . . . . . . . . . .	L Near	 00000007 _TEXT	
+  Got_Equal  . . . . . . . . . . . . .	L Near	 00000015 _TEXT	
+  Not_Find . . . . . . . . . . . . . .	L Near	 00000019 _TEXT	
+  Done . . . . . . . . . . . . . . . .	L Near	 0000001F _TEXT	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . . . . .	Number	 00000003h   
+@Model . . . . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . . . . .	Text   	 FLAT
+DataString . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+
+	   0 Warnings
+	   0 Errors

@@ -1,0 +1,104 @@
+﻿<Window x:Class="RubiksCubeReproduction.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RubiksCubeReproduction" xmlns:viewmodels="clr-namespace:RubiksCubeReproduction.ViewModels"
+        xmlns:converters="clr-namespace:RubiksCubeReproduction.Converters"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="650" Width="800"
+        d:DataContext="{d:DesignInstance viewmodels:MainWindowViewModel, IsDesignTimeCreatable=True}">
+    <Window.Resources>
+        <converters:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
+        <converters:ByteArrayToImageConverter x:Key="ByteArrayToImageConverter"/>
+    </Window.Resources>
+    <Grid ShowGridLines="True">
+        <!--Column definitions inspired by article https://www.c-sharpcorner.com/UploadFile/1e050f/grid-layout-in-wpf/-->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Reconstruct an image using Rubik's cubes!" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="35"></TextBlock>
+        <!--Settings layout inspired by open-source project https://github.com/szbartnik/GaussianBlurFilterApp/blob/master/Gauss.GUI/Views/MainWindow.xaml-->
+        <StackPanel Grid.Column="0" Grid.Row="1" Grid.RowSpan="2"  Margin="20 0 0 0" >
+            <Border BorderBrush="DeepSkyBlue" BorderThickness="3" Margin="0 0 0 10" Background="White">
+                <TextBlock Text="Settings" Margin="0 0 0 3" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <Border BorderBrush="DeepSkyBlue" BorderThickness="3" Margin="0 0 0 10" Padding="5" Background="White">
+                <StackPanel>
+                    <TextBlock Text="Number of threads:" FontSize="12" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding ElementName=ThreadsSlider, Path=Value}" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-5" />
+                    <Slider x:Name="ThreadsSlider" Minimum="1" Maximum="8" VerticalAlignment="Center" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding NumberOfThreads}" />
+                    <!--<CheckBox x:Name="TreadsAutodetectCheckbox" Content="Autodetect number of cores"  
+                              Margin="0 5 5 5" VerticalAlignment="Center" HorizontalAlignment="Center" />-->
+                </StackPanel>
+            </Border>
+            <!--<Border BorderBrush="DeepSkyBlue" BorderThickness="3" Margin="0 0 0 10" Padding="5" Background="White">
+                <StackPanel>
+                    <TextBlock Text="Blur iterations:" FontSize="12" VerticalAlignment="Center"/>
+                    <TextBlock Text="Binding ElementName=BlurLevelSlider, Path=Value" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-5" />
+                    <Slider x:Name="BlurLevelSlider" Minimum="1" Maximum="100" VerticalAlignment="Center" TickFrequency="1" IsSnapToTickEnabled="True" />
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="DeepSkyBlue" BorderThickness="3" Margin="0 0 0 10" Padding="5" Background="White">
+                <StackPanel>
+                    <TextBlock Text="Gauss mask size:" FontSize="12" VerticalAlignment="Center"/>
+                    <TextBlock Text="Binding ElementName=GaussMaskSizeSlider, Path=Value" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="-5" />
+                    <Slider x:Name="GaussMaskSizeSlider" Minimum="3" Maximum="9" VerticalAlignment="Center" TickFrequency="2" IsSnapToTickEnabled="True"/>
+                </StackPanel>
+            </Border>-->
+            <Border BorderBrush="DeepSkyBlue" BorderThickness="3" Margin="0 0 0 10" Padding="5" Background="White">
+                <StackPanel>
+                    <TextBlock Text="Generating library:" FontSize="12" VerticalAlignment="Center" Margin="0 0 0 5"/>
+                    <RadioButton Content="Assembly" Margin="20 0 0 0"
+                                 IsChecked="{Binding isAssemblerLibraryActive}"
+                                 />
+                    <RadioButton Content="C#" Margin="20 0 0 0"
+                                 IsChecked="{Binding isCSharpLibraryActive}"
+                                 />
+                </StackPanel>
+            </Border>
+            <Border BorderBrush="DeepSkyBlue" BorderThickness="3" Margin="0 0 0 10" Padding="5" Background="White">
+                <StackPanel>
+                    <TextBlock Text="Last generation time:" FontSize="12" VerticalAlignment="Center" Margin="0 0 0 5"/>
+                    <TextBlock FontSize="40" HorizontalAlignment="Center" Margin="0 -12 0 -3">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0:d2}s {1:d3}ms">
+                                <Binding Path="ComputationTime.Seconds" />
+                                <Binding Path="ComputationTime.Milliseconds" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+            <TextBlock Text="{Binding InformationText}" FontWeight="Bold" FontSize="20"
+                       HorizontalAlignment="Center" Foreground="GreenYellow" />
+            <Button Content="Generate Rubik's reproduction"
+                    Foreground="White" Height="50" FontSize="17" Background="DeepSkyBlue" Margin="0 0 0 2"
+                    Command="{Binding GenerateReproductionCommand}"
+                    />
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button Content="Save"  Margin="0 0 1 0"
+                        Foreground="White" Height="50" FontSize="17" Background="DeepSkyBlue" Command="{Binding SaveImageCommand}"/>
+                <Button Grid.Column="1" Content="Select"  Margin="1 0 0 0"
+                        Foreground="White" Height="50" FontSize="17" Background="DeepSkyBlue" Command="{Binding SelectImageCommand}"/>
+            </Grid>
+        </StackPanel>
+        <!--<TextBlock Text="Rowspan=2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18"></TextBlock>-->
+        <!--<TextBlock Text="Rowspan=2 Colspan=2" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18"></TextBlock>-->
+        <Image Visibility="{Binding MainPanelImage, Converter={StaticResource NullVisibilityConverter}}" 
+                        Source="{Binding MainPanelImage, Converter={StaticResource ByteArrayToImageConverter}, Mode=OneWay}" 
+                        Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="2" 
+                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Grid>
+</Window>
