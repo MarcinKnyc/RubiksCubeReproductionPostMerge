@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RubiksCubeReproduction": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

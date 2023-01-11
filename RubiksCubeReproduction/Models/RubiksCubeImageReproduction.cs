@@ -16,8 +16,9 @@ namespace RubiksCubeReproduction.Models
 {
     public class RubiksCubeImageReproduction
     {
-        [DllImport(@"H:\Kopia z dysku D\Polsl\sem IV\JA\JALab1\x64\Debug\DLLJALAB1.dll")]
-        static extern int PS_2();
+        //Argument: 3 bytes = pixel's RGB values
+        [DllImport(@"C:\Users\Marcin\source\repos\JALab1\x64\Debug\DLLJALAB1.dll")]
+        static unsafe extern int PS_2(byte* pixelRGB);
 
         public static int miliseconds = 0;
         public byte[] OriginalImage { get; private set; }
@@ -75,7 +76,7 @@ namespace RubiksCubeReproduction.Models
             List<Thread> threads = new List<Thread>();
             if (isAssemblerLibraryActive)
             {
-                MessageBox.Show(PS_2().ToString());
+                GenerateImageReproductionInAssembly();
             }
             else //C# library is active
             {
@@ -101,6 +102,16 @@ namespace RubiksCubeReproduction.Models
             int milisecondsCopy = miliseconds;
             miliseconds = 0;
             return milisecondsCopy;
+        }
+
+        private unsafe void GenerateImageReproductionInAssembly()
+        {
+            fixed (byte* ptr = new byte[3] { 1, 2, 3 })
+            {
+                int a = PS_2(ptr);
+                //passing values back thru pointer works
+                MessageBox.Show(ptr[0].ToString());
+            }
         }
 
         private List<ThreadSettings> divideImageForThreads(int numberOfThreads)

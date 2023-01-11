@@ -1,7 +1,3 @@
 LIBRARY "JAAsm"
 EXPORTS
-FindChar_1
-MMX_1
-XMM_1
-PS_1
 PS_2

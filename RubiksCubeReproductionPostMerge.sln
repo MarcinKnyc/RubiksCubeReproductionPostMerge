@@ -8,6 +8,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JALab1", "JALab1\JALab1.csproj", "{5CE21CDB-09A4-4EE0-AC4A-307AF7D447E6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RubiksCubeReproduction", "RubiksCubeReproduction\RubiksCubeReproduction.csproj", "{FCC8AA4A-FF45-42F4-86B0-273836890494}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D92FE7E9-9F69-4A8D-825B-264FDAB7D8D3} = {D92FE7E9-9F69-4A8D-825B-264FDAB7D8D3}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
